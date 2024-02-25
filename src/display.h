@@ -1,6 +1,13 @@
 #ifndef DISPLAY_H
 #define DISPLAY_H
 
+#define WINDOW_BORDERS
+#define WINDOW_WIDTH 800
+#define WINDOW_HEIGHT 600
+// false - растягивает окно с низким разрешением на весь экран
+// true - эмулирует полный экран с окном на полныей экран
+#define USE_REAL_FULLSCREEN false
+
 /////////////////////////
 // needed includes
 /////////////////////////

@@ -2,10 +2,9 @@
 #include <math.h>
 
 // defining variables and initialize them
-int window_width = 800;
-int window_height = 600;
-bool fakeFullscreen = true;
-bool realFullscreen = false;
+int window_width = WINDOW_WIDTH;
+int window_height = WINDOW_HEIGHT;
+bool realFullscreen = USE_REAL_FULLSCREEN;
 
 SDL_Window* window = NULL; // make sure if its NULL
 SDL_Renderer* renderer = NULL;
@@ -19,7 +18,7 @@ bool initialize_window(void) {
         return false;
     }
 
-    if (fakeFullscreen) {
+    if (!realFullscreen) {
         // fake fullscreen - we are not changing the mode of the video to be fullscreen
         SDL_DisplayMode display_mode;
         SDL_GetCurrentDisplayMode(0, &display_mode);
@@ -29,12 +28,20 @@ bool initialize_window(void) {
     
     // Create a SDL window
     window = SDL_CreateWindow(
-        NULL, // No title
+        #ifdef WINDOW_BORDERS
+            "My SDL window",
+        #else
+            NULL, // No title
+        #endif
         SDL_WINDOWPOS_CENTERED,
         SDL_WINDOWPOS_CENTERED,
         window_width,
         window_height,
-        SDL_WINDOW_BORDERLESS
+        #ifndef WINDOW_BORDERS
+            SDL_WINDOW_BORDERLESS
+        #else
+            0
+        #endif
     );
     if (!window) {
         fprintf(stderr, "Error creating SDL window.\n");
