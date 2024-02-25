@@ -1,4 +1,5 @@
 #include "display.h"
+#include <math.h>
 
 // defining variables and initialize them
 int window_width = 800;

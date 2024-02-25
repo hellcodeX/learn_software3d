@@ -1,17 +1,28 @@
-all: build run
+TARGET = renderer
+CC = gcc
+CFLAGS = -Wall -Wextra -std=c99
 
-# если не указать правило, будет выполнено первое правило
-build:
+# -lmingw32 -lSDL2main в таком порядке позволяет избежать ошибки <undefined reference to 'WinMain'>
 # lm - математическая библиотека
-	gcc -Wall -std=c99 ./src/*.c -lSDL2 -lm -o renderer
+LDFLAGS = -lmingw32 -lSDL2main -lSDL2 -lm
 
-.PHONY: run clean
+PREF_SRC = ./src/
+PREF_OBJ = ./obj/
 
-run:
-	./renderer
+SRC = $(wildcard $(PREF_SRC)*.c)
+OBJ = $(patsubst $(PREF_SRC)%.c, $(PREF_OBJ)%.o, $(SRC))
+
+.PHONY: all clean run
+
+$(TARGET) : $(OBJ)
+	$(CC) $(CFLAGS) $(OBJ) -o $(TARGET) $(LDFLAGS)
+
+$(PREF_OBJ)%.o : $(PREF_SRC)%.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm ./renderer
+	rm $(TARGET).exe  $(PREF_OBJ)*.o
 
-release:
-	gcc -O3 -Wall -std=c99 ./src/*.c -lSDL2 -lm -o renderer
+# @ - turn off out
+run:
+	@./$(TARGET).exe
