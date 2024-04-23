@@ -4,7 +4,8 @@
 // defining variables and initialize them
 int window_width = WINDOW_WIDTH;
 int window_height = WINDOW_HEIGHT;
-bool realFullscreen = USE_REAL_FULLSCREEN;
+bool realFullscreen = REAL_FULLSCREEN;
+bool useWindowedMode = WINDOWED_MODE;
 
 SDL_Window* window = NULL; // make sure if its NULL
 SDL_Renderer* renderer = NULL;
@@ -18,7 +19,7 @@ bool initialize_window(void) {
         return false;
     }
 
-    if (!realFullscreen) {
+    if (!realFullscreen && !useWindowedMode) {
         // fake fullscreen - we are not changing the mode of the video to be fullscreen
         SDL_DisplayMode display_mode;
         SDL_GetCurrentDisplayMode(0, &display_mode);
@@ -67,7 +68,6 @@ bool initialize_window(void) {
 }
 
 void destroy_window(void) {
-    free(color_buffer);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();

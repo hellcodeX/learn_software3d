@@ -1,12 +1,18 @@
 #ifndef DISPLAY_H
 #define DISPLAY_H
 
+// Если константа определена отображается заголовок окна
 #define WINDOW_BORDERS
+
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
-// false - растягивает окно с низким разрешением на весь экран
-// true - эмулирует полный экран с окном на полныей экран
-#define USE_REAL_FULLSCREEN false
+
+// true - растягивает окно с низким разрешением на весь экран
+// false - эмулирует полный экран используя окно в полный экран (fake fullscreen)
+#define REAL_FULLSCREEN false
+
+// для использования полный экран должен быть отключен
+#define WINDOWED_MODE true
 
 /////////////////////////
 // needed includes
@@ -25,8 +31,8 @@
 //////////////////////////////////////////////////////
 extern int window_width;
 extern int window_height;
-extern bool fakeFullscreen;
 extern bool realFullscreen;
+extern bool windowMode;
 
 extern SDL_Window* window;
 extern SDL_Renderer* renderer;
