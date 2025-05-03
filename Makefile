@@ -1,28 +1,53 @@
-TARGET = renderer
+# Compiler
 CC = gcc
+
+# Compiler flags: enable warnings and use C99 standard
 CFLAGS = -Wall -Wextra -std=c99
 
-# -lmingw32 -lSDL2main в таком порядке позволяет избежать ошибки <undefined reference to 'WinMain'>
-# lm - математическая библиотека
+# Linker flags:
+#   -lmingw32     : Required for Windows applications using MinGW
+#   -lSDL2main    : SDL2 main entry point for Windows GUI applications
+#   -lSDL2        : SDL2 library
+#   -lm           : Math library
 LDFLAGS = -lmingw32 -lSDL2main -lSDL2 -lm
 
-PREF_SRC = ./src/
-PREF_OBJ = ./obj/
+# Directories
+INCLUDE_DIR = include
+SRC_DIR = src
+OBJ_DIR = obj
 
-SRC = $(wildcard $(PREF_SRC)*.c)
-OBJ = $(patsubst $(PREF_SRC)%.c, $(PREF_OBJ)%.o, $(SRC))
+# Source and object files
+SOURCES = $(wildcard $(SRC_DIR)/*.c)
+OBJECTS = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SOURCES))
+DEPENDS = $(OBJECTS:.o=.d)
+
+# Output binary name
+TARGET = SWRenderer
+
+# Create the object directory if it doesn't exist
+$(shell mkdir -p $(OBJ_DIR))
+
+# Default target: build and run
+all: $(TARGET)
+	./$(TARGET) # Run the application after successful build
+
+# Link the final executable from object files
+$(TARGET): $(OBJECTS)
+	$(CC) $(CFLAGS) $(OBJECTS) $(LDFLAGS) -o $@
+
+# Rule to compile .c source files into .o object files
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+	$(CC) $(CFLAGS) -I$(INCLUDE_DIR) -MMD -MP -c $< -o $@
+
+# Include generated dependency files
+-include $(DEPENDS)
+
+# Clean all generated files
+clean:
+	rm -f $(OBJ_DIR)/*.o $(OBJ_DIR)/*.d $(TARGET)
+
+# Run the compiled program explicitly
+run:
+	@./$(TARGET)
 
 .PHONY: all clean run
-
-$(TARGET) : $(OBJ)
-	$(CC) $(CFLAGS) $(OBJ) -o $(TARGET) $(LDFLAGS)
-
-$(PREF_OBJ)%.o : $(PREF_SRC)%.c
-	$(CC) $(CFLAGS) -c $< -o $@
-
-clean:
-	rm $(TARGET).exe  $(PREF_OBJ)*.o
-
-# @ - turn off out
-run:
-	@./$(TARGET).exe

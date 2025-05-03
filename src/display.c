@@ -4,10 +4,8 @@
 // defining variables and initialize them
 int window_width = WINDOW_WIDTH;
 int window_height = WINDOW_HEIGHT;
-bool realFullscreen = REAL_FULLSCREEN;
-bool useWindowedMode = WINDOWED_MODE;
 
-SDL_Window* window = NULL; // make sure if its NULL
+SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
 
 uint32_t *color_buffer = NULL;
@@ -19,26 +17,17 @@ bool initialize_window(void) {
         return false;
     }
 
-    if (!realFullscreen && !useWindowedMode) {
-        // fake fullscreen - we are not changing the mode of the video to be fullscreen
-        SDL_DisplayMode display_mode;
-        SDL_GetCurrentDisplayMode(0, &display_mode);
-        window_width = display_mode.w;
-        window_height = display_mode.h;
-    }
-    
-    // Create a SDL window
     window = SDL_CreateWindow(
-        #ifdef WINDOW_BORDERS
-            "My SDL window",
+        #ifdef WINDOW_BORDERLESS
+             NULL, // No title
         #else
-            NULL, // No title
+            "My SDL Window",
         #endif
         SDL_WINDOWPOS_CENTERED,
         SDL_WINDOWPOS_CENTERED,
         window_width,
         window_height,
-        #ifndef WINDOW_BORDERS
+        #ifdef WINDOW_BORDERLESS
             SDL_WINDOW_BORDERLESS
         #else
             0
@@ -49,12 +38,13 @@ bool initialize_window(void) {
         return false;
     }
 
-    if (realFullscreen) {
-        // can stretch low res window to fullscreen
-        SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
-    }
+    // SDL_DisplayMode display_mode;
+    // SDL_GetCurrentDisplayMode(0, &display_mode);
 
-    // Create a SDL renderer
+    #ifdef FULLSCREEN_MODE
+    SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
+    #endif
+
     renderer = SDL_CreateRenderer(
         window,
         -1, // get first(default) display device
